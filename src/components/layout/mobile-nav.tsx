@@ -16,7 +16,7 @@ export function MobileNav({ items }: MobileNavProps) {
   const location = useLocation();
   const { userRole } = useUserRole();
 
-  const filteredItems = items.filter(item => 
+  const filteredItems = items?.filter(item => 
     item.roles.includes(userRole as 'admin' | 'teacher' | 'student')
   );
 
