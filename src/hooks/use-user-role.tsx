@@ -39,7 +39,7 @@ const mockUsers: Record<string, User> = {
   },
 };
 
-export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
+export function UserRoleProvider({ children }: { children: ReactNode }) {
   const [userRole, setUserRole] = useState<'admin' | 'teacher' | 'student'>('admin');
   const [user, setUser] = useState<User | null>(null);
 
@@ -53,6 +53,6 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </UserRoleContext.Provider>
   );
-};
+}
 
 export const useUserRole = () => useContext(UserRoleContext);
