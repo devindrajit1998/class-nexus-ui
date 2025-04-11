@@ -1,23 +1,39 @@
 
+import { useState } from "react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
-import { UserPlus, Download, Search, Mail } from "lucide-react";
+import { UserPlus, Download, Search, Mail, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 import { mockTeachers } from "@/lib/constants";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
+import { TeacherDetail } from "@/components/teachers/TeacherDetail";
+import { MessageForm } from "@/components/teachers/MessageForm";
+import { Teacher } from "@/types";
 
 export default function TeachersPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isMessageFormOpen, setIsMessageFormOpen] = useState(false);
   
   const filteredTeachers = mockTeachers.filter(teacher => 
     teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     teacher.department.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleViewTeacher = (teacher: Teacher) => {
+    setSelectedTeacher(teacher);
+    setIsViewOpen(true);
+  };
+
+  const handleMessageTeacher = (teacher: Teacher) => {
+    setSelectedTeacher(teacher);
+    setIsMessageFormOpen(true);
+  };
 
   const handleAddTeacher = () => {
     toast({
@@ -84,10 +100,19 @@ export default function TeachersPage() {
                     <span className="font-medium">Courses:</span> {teacher.courseIds.length}
                   </p>
                   <div className="flex gap-2 mt-4">
-                    <Button variant="outline" size="sm" onClick={() => toast({ title: "View details" })}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleViewTeacher(teacher)}
+                    >
+                      <Eye className="h-3 w-3 mr-1" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => toast({ title: "Message teacher" })}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleMessageTeacher(teacher)}
+                    >
                       <Mail className="h-3 w-3 mr-1" />
                       Message
                     </Button>
@@ -98,6 +123,20 @@ export default function TeachersPage() {
           </Card>
         ))}
       </div>
+
+      {/* View Teacher Details */}
+      <TeacherDetail 
+        teacher={selectedTeacher} 
+        open={isViewOpen} 
+        onOpenChange={setIsViewOpen}
+      />
+
+      {/* Message Teacher Form */}
+      <MessageForm 
+        teacher={selectedTeacher} 
+        open={isMessageFormOpen} 
+        onOpenChange={setIsMessageFormOpen}
+      />
     </div>
   );
 }

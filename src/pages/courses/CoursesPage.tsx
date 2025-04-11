@@ -1,16 +1,20 @@
 
+import { useState } from "react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, BookOpen, Users } from "lucide-react";
+import { Plus, Search, BookOpen, Users, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 import { mockCourses } from "@/lib/constants";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
+import { CourseDetail } from "@/components/courses/CourseDetail";
+import { Course } from "@/types";
 
 export default function CoursesPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [isViewOpen, setIsViewOpen] = useState(false);
   
   const filteredCourses = mockCourses.filter(course => 
     course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -19,6 +23,11 @@ export default function CoursesPage() {
     course.teacherName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const handleViewCourse = (course: Course) => {
+    setSelectedCourse(course);
+    setIsViewOpen(true);
+  };
 
   const handleAddCourse = () => {
     toast({
@@ -83,13 +92,25 @@ export default function CoursesPage() {
                 <Users className="h-3 w-3 mr-1" />
                 {course.enrolledCount} students
               </div>
-              <Button variant="outline" size="sm" onClick={() => toast({ title: "View course details" })}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleViewCourse(course)}
+              >
+                <Eye className="h-3 w-3 mr-1" />
                 View Course
               </Button>
             </CardFooter>
           </Card>
         ))}
       </div>
+
+      {/* View Course Details */}
+      <CourseDetail 
+        course={selectedCourse} 
+        open={isViewOpen} 
+        onOpenChange={setIsViewOpen}
+      />
     </div>
   );
 }
