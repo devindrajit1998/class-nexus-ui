@@ -16,6 +16,17 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import StudentDashboard from "./pages/student/StudentDashboard";
 
+// Feature pages
+import StudentsPage from "./pages/students/StudentsPage";
+import TeachersPage from "./pages/teachers/TeachersPage";
+import CoursesPage from "./pages/courses/CoursesPage";
+import AttendancePage from "./pages/attendance/AttendancePage";
+import GradesPage from "./pages/grades/GradesPage";
+import ResourcesPage from "./pages/resources/ResourcesPage";
+import MessagesPage from "./pages/messages/MessagesPage";
+import CertificatesPage from "./pages/certificates/CertificatesPage";
+import SettingsPage from "./pages/settings/SettingsPage";
+
 // 404 page
 import NotFound from "./pages/NotFound";
 
@@ -50,16 +61,16 @@ const App = () => {
           {/* Protected routes (inside layout) */}
           <Route path="/" element={<Layout />}>
             <Route index element={<DashboardComponent />} />
-            {/* Add other routes inside the layout */}
-            <Route path="students" element={<div>Students Page</div>} />
-            <Route path="teachers" element={<div>Teachers Page</div>} />
-            <Route path="courses" element={<div>Courses Page</div>} />
-            <Route path="attendance" element={<div>Attendance Page</div>} />
-            <Route path="grades" element={<div>Grades Page</div>} />
-            <Route path="resources" element={<div>Resources Page</div>} />
-            <Route path="messages" element={<div>Messages Page</div>} />
-            <Route path="certificates" element={<div>Certificates Page</div>} />
-            <Route path="settings" element={<div>Settings Page</div>} />
+            {/* Feature pages */}
+            <Route path="students" element={<StudentsPage />} />
+            <Route path="teachers" element={<TeachersPage />} />
+            <Route path="courses" element={<CoursesPage />} />
+            <Route path="attendance" element={<AttendancePage />} />
+            <Route path="grades" element={<GradesPage />} />
+            <Route path="resources" element={<ResourcesPage />} />
+            <Route path="messages" element={<MessagesPage />} />
+            <Route path="certificates" element={<CertificatesPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
 
           {/* 404 route */}
