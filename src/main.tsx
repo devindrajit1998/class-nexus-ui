@@ -6,7 +6,9 @@ import './index.css';
 import { UserRoleProvider } from './hooks/use-user-role';
 
 createRoot(document.getElementById("root")!).render(
-  <UserRoleProvider>
-    <App />
-  </UserRoleProvider>
+  <BrowserRouter>
+    <UserRoleProvider>
+      <App />
+    </UserRoleProvider>
+  </BrowserRouter>
 );

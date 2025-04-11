@@ -57,6 +57,12 @@ export default function AdminDashboard() {
     }, 1000);
   };
 
+  // Cast the mockStudents to ensure proper typing for the status field
+  const typedStudents = mockStudents.map(student => ({
+    ...student,
+    status: student.status as "active" | "inactive" | "suspended"
+  }));
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -143,7 +149,7 @@ export default function AdminDashboard() {
         <div className="md:col-span-3">
           <h2 className="text-xl font-bold mb-4">Manage Students</h2>
           <StudentTable 
-            students={mockStudents.slice(0, 5)} 
+            students={typedStudents.slice(0, 5)} 
             onView={(student) => toast({ title: "View Student", description: `Viewing ${student.name}` })}
             onEdit={(student) => toast({ title: "Edit Student", description: `Editing ${student.name}` })}
             onDelete={(student) => toast({ title: "Delete Student", description: `Deleting ${student.name}` })}
