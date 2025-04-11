@@ -10,11 +10,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { ImageUploader } from "@/components/common/ImageUploader";
 
 const studentSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   status: z.enum(["active", "inactive", "suspended"]),
+  avatarUrl: z.string().optional(),
 });
 
 type StudentFormProps = {
@@ -25,19 +27,27 @@ type StudentFormProps = {
 };
 
 export function StudentForm({ student, open, onOpenChange, onSubmit }: StudentFormProps) {
+  const [avatarUrl, setAvatarUrl] = useState(student?.avatarUrl || "");
+  
   const form = useForm<z.infer<typeof studentSchema>>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
       name: student?.name || "",
       email: student?.email || "",
       status: student?.status || "active",
+      avatarUrl: student?.avatarUrl || "",
     },
   });
 
   const handleSubmit = (data: z.infer<typeof studentSchema>) => {
-    onSubmit(data);
+    const formData = { ...data, avatarUrl };
+    onSubmit(formData);
     onOpenChange(false);
     form.reset();
+  };
+
+  const handleImageChange = (imageData: string) => {
+    setAvatarUrl(imageData);
   };
 
   return (
@@ -48,6 +58,12 @@ export function StudentForm({ student, open, onOpenChange, onSubmit }: StudentFo
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <div className="flex flex-col items-center mb-4">
+              <ImageUploader 
+                initialImage={student?.avatarUrl} 
+                onImageChange={handleImageChange} 
+              />
+            </div>
             <FormField
               control={form.control}
               name="name"

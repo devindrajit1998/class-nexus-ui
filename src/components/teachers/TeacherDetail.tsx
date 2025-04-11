@@ -28,7 +28,7 @@ export function TeacherDetail({ teacher, open, onOpenChange }: TeacherDetailProp
           <DialogTitle>Teacher Details</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center space-y-4 py-4">
-          <Avatar className="h-20 w-20">
+          <Avatar className="h-24 w-24">
             <AvatarImage src={teacher.avatarUrl} alt={teacher.name} />
             <AvatarFallback>{teacher.name.substring(0, 2)}</AvatarFallback>
           </Avatar>

@@ -82,7 +82,7 @@ export default function StudentsPage() {
       name: data.name,
       email: data.email,
       status: data.status as "active" | "inactive" | "suspended",
-      avatarUrl: "",
+      avatarUrl: data.avatarUrl || "",
       courseIds: [],
     };
     
@@ -97,7 +97,13 @@ export default function StudentsPage() {
     if (selectedStudent) {
       setStudents(students.map(s => 
         s.id === selectedStudent.id ? 
-        { ...s, name: data.name, email: data.email, status: data.status } : 
+        { 
+          ...s, 
+          name: data.name, 
+          email: data.email, 
+          status: data.status as "active" | "inactive" | "suspended", 
+          avatarUrl: data.avatarUrl || s.avatarUrl 
+        } : 
         s
       ));
       
