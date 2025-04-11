@@ -1,4 +1,3 @@
-
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
@@ -12,6 +11,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useUserRole } from "@/hooks/use-user-role";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 export default function SettingsPage() {
   const { userRole, user } = useUserRole();
