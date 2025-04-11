@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
-import { UserPlus, Download, Search, Mail, Eye } from "lucide-react";
+import { UserPlus, Download, Search, Mail, Eye, Edit, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { mockTeachers } from "@/lib/constants";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,15 +11,31 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 import { TeacherDetail } from "@/components/teachers/TeacherDetail";
 import { MessageForm } from "@/components/teachers/MessageForm";
+import { TeacherForm } from "@/components/teachers/TeacherForm";
 import { Teacher } from "@/types";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function TeachersPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [teachers, setTeachers] = useState(mockTeachers);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [teacherToDelete, setTeacherToDelete] = useState<Teacher | null>(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isMessageFormOpen, setIsMessageFormOpen] = useState(false);
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
-  const filteredTeachers = mockTeachers.filter(teacher => 
+  const filteredTeachers = teachers.filter(teacher => 
     teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     teacher.department.toLowerCase().includes(searchTerm.toLowerCase())
@@ -30,16 +46,35 @@ export default function TeachersPage() {
     setIsViewOpen(true);
   };
 
+  const handleEditTeacher = (teacher: Teacher) => {
+    setSelectedTeacher(teacher);
+    setIsEditFormOpen(true);
+  };
+
   const handleMessageTeacher = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
     setIsMessageFormOpen(true);
   };
 
+  const handleDeleteTeacher = (teacher: Teacher) => {
+    setTeacherToDelete(teacher);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteTeacher = () => {
+    if (teacherToDelete) {
+      setTeachers(teachers.filter(t => t.id !== teacherToDelete.id));
+      toast({
+        title: "Teacher Deleted",
+        description: `${teacherToDelete.name} has been removed from the system.`,
+      });
+      setTeacherToDelete(null);
+    }
+    setIsDeleteDialogOpen(false);
+  };
+
   const handleAddTeacher = () => {
-    toast({
-      title: "Add Teacher",
-      description: "This functionality will be implemented soon.",
-    });
+    setIsAddFormOpen(true);
   };
 
   const handleDownload = () => {
@@ -47,6 +82,44 @@ export default function TeachersPage() {
       title: "Download Data",
       description: "Exporting teacher data...",
     });
+  };
+
+  const handleAddTeacherSubmit = (data: any) => {
+    const newTeacher: Teacher = {
+      id: `teacher-${Date.now()}`,
+      name: data.name,
+      email: data.email,
+      department: data.department,
+      avatarUrl: data.avatarUrl || "",
+      courseIds: [],
+    };
+    
+    setTeachers([...teachers, newTeacher]);
+    toast({
+      title: "Teacher Added",
+      description: `${data.name} has been added successfully.`,
+    });
+  };
+
+  const handleEditTeacherSubmit = (data: any) => {
+    if (selectedTeacher) {
+      setTeachers(teachers.map(t => 
+        t.id === selectedTeacher.id ? 
+        { 
+          ...t, 
+          name: data.name, 
+          email: data.email, 
+          department: data.department, 
+          avatarUrl: data.avatarUrl || t.avatarUrl 
+        } : 
+        t
+      ));
+      
+      toast({
+        title: "Teacher Updated",
+        description: `${data.name}'s information has been updated.`,
+      });
+    }
   };
 
   return (
@@ -111,10 +184,26 @@ export default function TeachersPage() {
                     <Button 
                       variant="outline" 
                       size="sm" 
+                      onClick={() => handleEditTeacher(teacher)}
+                    >
+                      <Edit className="h-3 w-3 mr-1" />
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
                       onClick={() => handleMessageTeacher(teacher)}
                     >
                       <Mail className="h-3 w-3 mr-1" />
                       Message
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleDeleteTeacher(teacher)} 
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
                 </div>
@@ -129,6 +218,7 @@ export default function TeachersPage() {
         teacher={selectedTeacher} 
         open={isViewOpen} 
         onOpenChange={setIsViewOpen}
+        onEdit={handleEditTeacher}
       />
 
       {/* Message Teacher Form */}
@@ -137,6 +227,39 @@ export default function TeachersPage() {
         open={isMessageFormOpen} 
         onOpenChange={setIsMessageFormOpen}
       />
+
+      {/* Add Teacher Form */}
+      <TeacherForm 
+        open={isAddFormOpen} 
+        onOpenChange={setIsAddFormOpen} 
+        onSubmit={handleAddTeacherSubmit}
+      />
+
+      {/* Edit Teacher Form */}
+      <TeacherForm 
+        teacher={selectedTeacher as Teacher} 
+        open={isEditFormOpen} 
+        onOpenChange={setIsEditFormOpen} 
+        onSubmit={handleEditTeacherSubmit}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete {teacherToDelete?.name}'s account and remove all associated data. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteTeacher} className="bg-red-500 hover:bg-red-600">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

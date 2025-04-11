@@ -77,11 +77,13 @@ export default function StudentsPage() {
   };
 
   const handleAddStudentSubmit = (data: any) => {
+    const status = data.status as "active" | "inactive" | "suspended";
+    
     const newStudent: Student = {
       id: `student-${Date.now()}`,
       name: data.name,
       email: data.email,
-      status: data.status as "active" | "inactive" | "suspended",
+      status: status,
       avatarUrl: data.avatarUrl || "",
       courseIds: [],
     };
@@ -95,13 +97,15 @@ export default function StudentsPage() {
 
   const handleEditStudentSubmit = (data: any) => {
     if (selectedStudent) {
+      const status = data.status as "active" | "inactive" | "suspended";
+      
       setStudents(students.map(s => 
         s.id === selectedStudent.id ? 
         { 
           ...s, 
           name: data.name, 
           email: data.email, 
-          status: data.status as "active" | "inactive" | "suspended", 
+          status: status, 
           avatarUrl: data.avatarUrl || s.avatarUrl 
         } : 
         s

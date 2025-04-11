@@ -10,15 +10,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Mail, BookOpen, Building } from "lucide-react";
+import { Mail, BookOpen, Building, Edit } from "lucide-react";
 
 type TeacherDetailProps = {
   teacher: Teacher | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onEdit?: (teacher: Teacher) => void;
 };
 
-export function TeacherDetail({ teacher, open, onOpenChange }: TeacherDetailProps) {
+export function TeacherDetail({ teacher, open, onOpenChange, onEdit }: TeacherDetailProps) {
   if (!teacher) return null;
 
   return (
@@ -51,8 +52,17 @@ export function TeacherDetail({ teacher, open, onOpenChange }: TeacherDetailProp
             <span>{teacher.department}</span>
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className="flex justify-between">
           <Button onClick={() => onOpenChange(false)}>Close</Button>
+          {onEdit && (
+            <Button onClick={() => { 
+              onOpenChange(false);
+              onEdit(teacher);
+            }} variant="outline">
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -2,21 +2,39 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, BookOpen, Users, Eye } from "lucide-react";
+import { Plus, Search, BookOpen, Users, Eye, Edit, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { mockCourses } from "@/lib/constants";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 import { CourseDetail } from "@/components/courses/CourseDetail";
+import { CourseForm } from "@/components/courses/CourseForm";
 import { Course } from "@/types";
+import { useUserRole } from "@/hooks/use-user-role";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function CoursesPage() {
+  const { user, userRole } = useUserRole();
   const [searchTerm, setSearchTerm] = useState("");
+  const [courses, setCourses] = useState(mockCourses);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
-  const filteredCourses = mockCourses.filter(course => 
+  const filteredCourses = courses.filter(course => 
     course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -29,11 +47,77 @@ export default function CoursesPage() {
     setIsViewOpen(true);
   };
 
+  const handleEditCourse = (course: Course) => {
+    setSelectedCourse(course);
+    setIsEditFormOpen(true);
+  };
+
+  const handleDeleteCourse = (course: Course) => {
+    setCourseToDelete(course);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteCourse = () => {
+    if (courseToDelete) {
+      setCourses(courses.filter(c => c.id !== courseToDelete.id));
+      toast({
+        title: "Course Deleted",
+        description: `${courseToDelete.title} has been removed from the system.`,
+      });
+      setCourseToDelete(null);
+    }
+    setIsDeleteDialogOpen(false);
+  };
+
   const handleAddCourse = () => {
+    setIsAddFormOpen(true);
+  };
+
+  const handleAddCourseSubmit = (data: any) => {
+    const newCourse: Course = {
+      id: `course-${Date.now()}`,
+      title: data.title,
+      description: data.description,
+      imageUrl: data.imageUrl || "",
+      teacherId: data.teacherId || (userRole === "teacher" ? "teacher-1" : ""), // In a real app, get from context if teacher
+      teacherName: data.teacherName || (userRole === "teacher" ? user?.name || "Teacher" : ""),
+      category: data.category,
+      enrolledCount: 0,
+      tags: data.tags || [],
+    };
+    
+    setCourses([...courses, newCourse]);
     toast({
-      title: "Add Course",
-      description: "This functionality will be implemented soon.",
+      title: "Course Added",
+      description: `${data.title} has been added successfully.`,
     });
+  };
+
+  const handleEditCourseSubmit = (data: any) => {
+    if (selectedCourse) {
+      setCourses(courses.map(c => 
+        c.id === selectedCourse.id ? 
+        { 
+          ...c, 
+          title: data.title, 
+          description: data.description,
+          category: data.category,
+          imageUrl: data.imageUrl || c.imageUrl,
+          tags: data.tags || c.tags 
+        } : 
+        c
+      ));
+      
+      toast({
+        title: "Course Updated",
+        description: `${data.title} has been updated successfully.`,
+      });
+    }
+  };
+
+  // Check if user can edit or delete (admin or teacher who owns the course)
+  const canEditCourse = (course: Course) => {
+    return userRole === "admin" || (userRole === "teacher" && course.teacherId === "teacher-1");
   };
 
   return (
@@ -66,7 +150,15 @@ export default function CoursesPage() {
         {filteredCourses.map((course) => (
           <Card key={course.id} className="overflow-hidden">
             <div className="h-32 bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center">
-              <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
+              {course.imageUrl ? (
+                <img 
+                  src={course.imageUrl} 
+                  alt={course.title} 
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <BookOpen className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
+              )}
             </div>
             <CardHeader className="p-4">
               <div className="flex items-start justify-between">
@@ -92,14 +184,37 @@ export default function CoursesPage() {
                 <Users className="h-3 w-3 mr-1" />
                 {course.enrolledCount} students
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleViewCourse(course)}
-              >
-                <Eye className="h-3 w-3 mr-1" />
-                View Course
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleViewCourse(course)}
+                >
+                  <Eye className="h-3 w-3 mr-1" />
+                  View
+                </Button>
+                
+                {canEditCourse(course) && (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleEditCourse(course)}
+                    >
+                      <Edit className="h-3 w-3 mr-1" />
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleDeleteCourse(course)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </>
+                )}
+              </div>
             </CardFooter>
           </Card>
         ))}
@@ -111,6 +226,39 @@ export default function CoursesPage() {
         open={isViewOpen} 
         onOpenChange={setIsViewOpen}
       />
+
+      {/* Add Course Form */}
+      <CourseForm 
+        open={isAddFormOpen} 
+        onOpenChange={setIsAddFormOpen} 
+        onSubmit={handleAddCourseSubmit}
+      />
+
+      {/* Edit Course Form */}
+      <CourseForm 
+        course={selectedCourse as Course} 
+        open={isEditFormOpen} 
+        onOpenChange={setIsEditFormOpen} 
+        onSubmit={handleEditCourseSubmit}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the course "{courseToDelete?.title}" and remove all associated data. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteCourse} className="bg-red-500 hover:bg-red-600">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

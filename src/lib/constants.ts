@@ -1,4 +1,3 @@
-
 import {
   BarChart4,
   BookOpen,
@@ -472,56 +471,56 @@ export const mockAttendance = [
 export const mockResources = [
   {
     id: "resource-1",
-    title: "Introduction to Programming - Lecture Notes",
-    type: "pdf",
-    url: "#",
+    title: "Introduction to Computer Science - Lecture Notes",
+    type: "pdf" as "pdf" | "video" | "link",
+    url: "https://example.com/resources/cs101-notes.pdf",
     courseId: "course-1",
     uploadedBy: "teacher-1",
-    uploadDate: "2023-09-10",
+    uploadDate: "2023-09-15T10:00:00Z"
   },
   {
     id: "resource-2",
-    title: "Web Development Basics - Video Tutorial",
-    type: "video",
-    url: "#",
-    courseId: "course-4",
-    uploadedBy: "teacher-4",
-    uploadDate: "2023-09-12",
+    title: "Data Structures Tutorial Video",
+    type: "video" as "pdf" | "video" | "link",
+    url: "https://example.com/resources/data-structures-video.mp4",
+    courseId: "course-2",
+    uploadedBy: "teacher-1",
+    uploadDate: "2023-09-20T14:30:00Z"
   },
   {
     id: "resource-3",
-    title: "Calculus Formulas - Quick Reference",
-    type: "pdf",
-    url: "#",
-    courseId: "course-2",
+    title: "Algorithm Design Reference",
+    type: "link" as "pdf" | "video" | "link",
+    url: "https://example.com/resources/algorithm-design",
+    courseId: "course-3",
     uploadedBy: "teacher-2",
-    uploadDate: "2023-09-08",
+    uploadDate: "2023-10-05T09:15:00Z"
   },
   {
     id: "resource-4",
-    title: "Quantum Mechanics - Online Simulation",
-    type: "link",
-    url: "#",
-    courseId: "course-3",
+    title: "Software Engineering Best Practices",
+    type: "pdf" as "pdf" | "video" | "link",
+    url: "https://example.com/resources/se-practices.pdf",
+    courseId: "course-4",
     uploadedBy: "teacher-3",
-    uploadDate: "2023-09-15",
+    uploadDate: "2023-10-12T11:45:00Z"
   },
   {
     id: "resource-5",
-    title: "Introduction to Psychology - Textbook",
-    type: "pdf",
-    url: "#",
-    courseId: "course-5",
-    uploadedBy: "teacher-5",
-    uploadDate: "2023-09-05",
+    title: "Database Systems Overview",
+    type: "pdf" as "pdf" | "video" | "link",
+    url: "https://example.com/resources/db-systems.pdf",
+    courseId: "course-1",
+    uploadedBy: "teacher-1",
+    uploadDate: "2023-10-18T13:20:00Z"
   },
   {
     id: "resource-6",
-    title: "Data Analysis with Python - Tutorial",
-    type: "video",
-    url: "#",
-    courseId: "course-6",
-    uploadedBy: "teacher-6",
-    uploadDate: "2023-09-14",
+    title: "Web Development Fundamentals",
+    type: "video" as "pdf" | "video" | "link",
+    url: "https://example.com/resources/web-dev-basics.mp4",
+    courseId: "course-2",
+    uploadedBy: "teacher-1",
+    uploadDate: "2023-10-25T15:10:00Z"
   },
 ];
