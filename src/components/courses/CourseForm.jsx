@@ -41,7 +41,7 @@ export function CourseForm({
     onOpenChange(false);
   };
 
-  const handleImageUpload = (url) => {
+  const handleImageChange = (url) => {
     setImageUrl(url);
   };
 
@@ -56,7 +56,7 @@ export function CourseForm({
             <div className="flex flex-col items-center gap-2 mb-4">
               <ImageUploader 
                 initialImage={imageUrl} 
-                onImageChange={handleImageUpload}
+                onImageChange={handleImageChange}
                 className="h-40 w-full rounded-md object-cover"
               />
               <span className="text-sm text-muted-foreground">Upload course image</span>

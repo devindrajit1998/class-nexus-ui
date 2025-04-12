@@ -29,7 +29,7 @@ export function TeacherForm({ teacher, open, onOpenChange, onSubmit }) {
     onOpenChange(false);
   };
 
-  const handleImageUpload = (url) => {
+  const handleImageChange = (url) => {
     setAvatarUrl(url);
   };
 
@@ -44,7 +44,7 @@ export function TeacherForm({ teacher, open, onOpenChange, onSubmit }) {
             <div className="flex flex-col items-center gap-2 mb-4">
               <ImageUploader 
                 initialImage={avatarUrl} 
-                onImageChange={handleImageUpload}
+                onImageChange={handleImageChange}
                 className="h-24 w-24 rounded-full"
               />
               <span className="text-sm text-muted-foreground">Upload profile picture</span>
