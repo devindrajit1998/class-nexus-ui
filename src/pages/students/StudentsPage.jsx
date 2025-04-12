@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/layout/page-header";
 import { StudentDetail } from "@/components/students/StudentDetail";
+import { StudentForm } from "@/components/students/StudentForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "@/components/ui/use-toast";
 
@@ -88,8 +89,10 @@ export default function StudentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
+  const [studentToEdit, setStudentToEdit] = useState(null);
 
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -101,11 +104,14 @@ export default function StudentsPage() {
     setIsDetailOpen(true);
   };
 
+  const handleAddNew = () => {
+    setStudentToEdit(null);
+    setIsFormOpen(true);
+  };
+
   const handleEdit = (student) => {
-    toast({
-      title: "Edit Student",
-      description: `Editing ${student.name} (Not implemented in this demo)`,
-    });
+    setStudentToEdit(student);
+    setIsFormOpen(true);
   };
 
   const handleDeleteClick = (student) => {
@@ -125,6 +131,32 @@ export default function StudentsPage() {
     }
   };
 
+  const handleFormSubmit = (data) => {
+    if (studentToEdit) {
+      // Update existing student
+      setStudents(students.map(s => 
+        s.id === studentToEdit.id ? { ...s, ...data } : s
+      ));
+      toast({
+        title: "Student Updated",
+        description: `${data.name} has been updated successfully.`,
+      });
+    } else {
+      // Add new student
+      const newStudent = {
+        id: `STU00${students.length + 1}`,
+        courseIds: [],
+        ...data,
+      };
+      setStudents([...students, newStudent]);
+      toast({
+        title: "Student Added",
+        description: `${data.name} has been added successfully.`,
+      });
+    }
+    setIsFormOpen(false);
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case "active":
@@ -138,30 +170,13 @@ export default function StudentsPage() {
     }
   };
 
-  const addNewStudent = () => {
-    const newStudent = {
-      id: `STU00${students.length + 1}`,
-      name: "New Student",
-      email: "new.student@example.com",
-      avatarUrl: "",
-      courseIds: [],
-      status: "active",
-    };
-    
-    setStudents([...students, newStudent]);
-    toast({
-      title: "Student Added",
-      description: "New student has been added successfully.",
-    });
-  };
-
   return (
     <div className="container mx-auto py-6">
       <PageHeader
         title="Students"
         description="Manage student accounts and enrollments."
         actions={
-          <Button onClick={addNewStudent}>
+          <Button onClick={handleAddNew}>
             <Plus className="mr-2 h-4 w-4" />
             Add Student
           </Button>
@@ -247,6 +262,13 @@ export default function StudentsPage() {
         student={selectedStudent} 
         open={isDetailOpen} 
         onOpenChange={setIsDetailOpen} 
+      />
+
+      <StudentForm
+        student={studentToEdit}
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        onSubmit={handleFormSubmit}
       />
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

@@ -12,9 +12,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 
 // Dashboard pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import TeacherDashboard from "./pages/teacher/TeacherDashboard";
-import StudentDashboard from "./pages/student/StudentDashboard";
+import Index from "./pages/Index";
 
 // Feature pages
 import StudentsPage from "./pages/students/StudentsPage";
@@ -33,23 +31,6 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const { userRole } = useUserRole();
-
-  // Dashboard component based on user role
-  const DashboardComponent = () => {
-    switch (userRole) {
-      case "admin":
-        return <AdminDashboard />;
-      case "teacher":
-        return <TeacherDashboard />;
-      case "student":
-        return <StudentDashboard />;
-      default:
-        // If no role (not logged in), redirect to login
-        return <Navigate to="/auth/login" />;
-    }
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -60,7 +41,7 @@ const App = () => {
 
           {/* Protected routes (inside layout) */}
           <Route path="/" element={<Layout />}>
-            <Route index element={<DashboardComponent />} />
+            <Route index element={<Index />} />
             {/* Feature pages */}
             <Route path="students" element={<StudentsPage />} />
             <Route path="teachers" element={<TeachersPage />} />

@@ -1,8 +1,8 @@
 
 import { useUserRole } from "@/hooks/use-user-role";
-import AdminDashboard from "./dashboard/AdminDashboard";
-import TeacherDashboard from "./dashboard/TeacherDashboard";
-import StudentDashboard from "./dashboard/StudentDashboard";
+import AdminDashboard from "./admin/AdminDashboard";
+import TeacherDashboard from "./teacher/TeacherDashboard";
+import StudentDashboard from "./student/StudentDashboard";
 
 const Index = () => {
   const { userRole } = useUserRole();
