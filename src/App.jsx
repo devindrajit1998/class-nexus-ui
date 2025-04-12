@@ -24,6 +24,7 @@ import ResourcesPage from "./pages/resources/ResourcesPage";
 import MessagesPage from "./pages/messages/MessagesPage";
 import CertificatesPage from "./pages/certificates/CertificatesPage";
 import SettingsPage from "./pages/settings/SettingsPage";
+import HelpPage from "./pages/help/HelpPage";
 
 // 404 page
 import NotFound from "./pages/NotFound";
@@ -52,6 +53,7 @@ const App = () => {
             <Route path="messages" element={<MessagesPage />} />
             <Route path="certificates" element={<CertificatesPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="help" element={<HelpPage />} />
           </Route>
 
           {/* 404 route */}

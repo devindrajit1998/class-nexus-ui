@@ -40,11 +40,8 @@ export default function StudentDashboard() {
   // Filter courses for this student (first 3 for demo)
   const studentCourses = mockCourses.slice(0, 3);
   
-  // Filter resources (first 3 for demo) and type-cast the resource type for TypeScript
-  const studentResources = mockResources.slice(0, 3).map(resource => ({
-    ...resource,
-    type: resource.type
-  }));
+  // Filter resources (first 3 for demo)
+  const studentResources = mockResources.slice(0, 3);
 
   const handleCourseAction = (course) => {
     setSelectedCourse(course);

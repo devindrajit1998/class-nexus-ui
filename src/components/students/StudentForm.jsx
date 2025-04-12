@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,21 @@ export function StudentForm({ student, open, onOpenChange, onSubmit }) {
   const [email, setEmail] = useState(student?.email || "");
   const [status, setStatus] = useState(student?.status || "active");
   const [avatarUrl, setAvatarUrl] = useState(student?.avatarUrl || "");
+
+  // Update form when student changes
+  useEffect(() => {
+    if (student) {
+      setName(student.name || "");
+      setEmail(student.email || "");
+      setStatus(student.status || "active");
+      setAvatarUrl(student.avatarUrl || "");
+    } else {
+      setName("");
+      setEmail("");
+      setStatus("active");
+      setAvatarUrl("");
+    }
+  }, [student]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,15 +48,17 @@ export function StudentForm({ student, open, onOpenChange, onSubmit }) {
       avatarUrl,
     });
     
-    // Reset form
-    setName("");
-    setEmail("");
-    setStatus("active");
-    setAvatarUrl("");
+    // Reset form if not editing
+    if (!student) {
+      setName("");
+      setEmail("");
+      setStatus("active");
+      setAvatarUrl("");
+    }
   };
 
-  const handleImageChange = (imageData) => {
-    setAvatarUrl(imageData);
+  const handleImageChange = (url) => {
+    setAvatarUrl(url);
   };
 
   return (
@@ -53,7 +70,7 @@ export function StudentForm({ student, open, onOpenChange, onSubmit }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col items-center mb-4">
             <ImageUploader 
-              initialImage={student?.avatarUrl} 
+              initialImage={avatarUrl} 
               onImageChange={handleImageChange} 
             />
           </div>
@@ -85,7 +102,7 @@ export function StudentForm({ student, open, onOpenChange, onSubmit }) {
             <Label htmlFor="status">Status</Label>
             <Select
               value={status}
-              onValueChange={setStatus}
+              onValueChange={(value) => setStatus(value)}
             >
               <SelectTrigger id="status">
                 <SelectValue placeholder="Select status" />
