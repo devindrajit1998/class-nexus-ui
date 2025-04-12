@@ -27,6 +27,9 @@ const attendanceData = [
   { week: "Week 8", attendance: 90 },
 ];
 
+// Video URL to use for demonstration
+const demoVideoUrl = "https://vjs.zencdn.net/v/oceans.mp4";
+
 export default function StudentDashboard() {
   const { user } = useUserRole();
   const navigate = useNavigate();
@@ -44,7 +47,12 @@ export default function StudentDashboard() {
   const studentResources = mockResources.slice(0, 3);
 
   const handleCourseAction = (course) => {
-    setSelectedCourse(course);
+    // Add video URL for demo purposes if not present
+    const courseWithVideo = {
+      ...course,
+      videoUrl: course.videoUrl || demoVideoUrl
+    };
+    setSelectedCourse(courseWithVideo);
     setCourseDialogOpen(true);
   };
 
@@ -55,6 +63,13 @@ export default function StudentDashboard() {
 
   const handleViewCertificates = () => {
     navigate('/certificates');
+  };
+
+  const handleResourceDownload = (resource) => {
+    toast({
+      title: "Download Started",
+      description: `Downloading: ${resource.title}`
+    });
   };
 
   return (
@@ -147,12 +162,7 @@ export default function StudentDashboard() {
             <ResourceCard
               key={resource.id}
               resource={resource}
-              onDownload={(resource) => 
-                toast({ 
-                  title: "Download Started", 
-                  description: `Downloading: ${resource.title}` 
-                })
-              }
+              onDownload={handleResourceDownload}
               onPreview={handleResourcePreview}
             />
           ))}
