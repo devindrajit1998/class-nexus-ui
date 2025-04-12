@@ -1,125 +1,127 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/layout/page-header";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
-  DropdownMenu, 
-  DropdownMenuTrigger, 
-  DropdownMenuContent, 
+  MoreHorizontal, 
+  Plus, 
+  Search,
+  Eye,
+  Edit,
+  Trash2
+} from "lucide-react";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuItem
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DotsHorizontalIcon, PlusIcon } from "lucide-react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { toast } from "@/components/ui/use-toast";
-import { StudentForm } from "@/components/students/StudentForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { PageHeader } from "@/components/layout/page-header";
 import { StudentDetail } from "@/components/students/StudentDetail";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "@/components/ui/use-toast";
 
-// Mock Students Data
-const mockStudents = [
+// Dummy data for demonstration
+const initialStudents = [
   {
-    id: "student-1",
-    name: "Alice Johnson",
-    email: "alice.johnson@example.com",
-    avatarUrl: "https://randomuser.me/api/portraits/women/1.jpg",
-    courseIds: ["course-1", "course-2"],
-    status: "active"
+    id: "STU001",
+    name: "Alex Johnson",
+    email: "alex.johnson@example.com",
+    avatarUrl: "https://i.pravatar.cc/150?u=alex",
+    courseIds: ["CRS001", "CRS002"],
+    status: "active",
   },
   {
-    id: "student-2",
-    name: "Bob Smith",
-    email: "bob.smith@example.com",
-    avatarUrl: "https://randomuser.me/api/portraits/men/1.jpg",
-    courseIds: ["course-1"],
-    status: "inactive"
+    id: "STU002",
+    name: "Jamie Smith",
+    email: "jamie.smith@example.com",
+    avatarUrl: "https://i.pravatar.cc/150?u=jamie",
+    courseIds: ["CRS001"],
+    status: "inactive",
   },
   {
-    id: "student-3",
-    name: "Carol Williams",
-    email: "carol.williams@example.com",
-    avatarUrl: "https://randomuser.me/api/portraits/women/2.jpg",
-    courseIds: ["course-3"],
-    status: "active"
+    id: "STU003",
+    name: "Taylor Brown",
+    email: "taylor.brown@example.com",
+    avatarUrl: "https://i.pravatar.cc/150?u=taylor",
+    courseIds: ["CRS003"],
+    status: "suspended",
   },
   {
-    id: "student-4",
-    name: "David Brown",
-    email: "david.brown@example.com",
-    avatarUrl: "https://randomuser.me/api/portraits/men/2.jpg",
-    courseIds: ["course-2", "course-3"],
-    status: "suspended"
+    id: "STU004",
+    name: "Morgan Lee",
+    email: "morgan.lee@example.com",
+    avatarUrl: "https://i.pravatar.cc/150?u=morgan",
+    courseIds: ["CRS002", "CRS003"],
+    status: "active",
   },
   {
-    id: "student-5",
-    name: "Eva Davis",
-    email: "eva.davis@example.com",
-    avatarUrl: "https://randomuser.me/api/portraits/women/3.jpg",
+    id: "STU005",
+    name: "Casey Wilson",
+    email: "casey.wilson@example.com",
+    avatarUrl: "https://i.pravatar.cc/150?u=casey",
     courseIds: [],
-    status: "inactive"
-  }
+    status: "inactive",
+  },
 ];
 
 export default function StudentsPage() {
-  const [students, setStudents] = useState(mockStudents);
+  const [students, setStudents] = useState(initialStudents);
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [formOpen, setFormOpen] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
 
-  const handleViewDetail = (student) => {
+  const filteredStudents = students.filter((student) =>
+    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleView = (student) => {
     setSelectedStudent(student);
-    setDetailOpen(true);
+    setIsDetailOpen(true);
   };
 
   const handleEdit = (student) => {
-    setSelectedStudent(student);
-    setFormOpen(true);
+    toast({
+      title: "Edit Student",
+      description: `Editing ${student.name} (Not implemented in this demo)`,
+    });
   };
 
-  const handleDelete = (student) => {
+  const handleDeleteClick = (student) => {
     setStudentToDelete(student);
-    setDeleteDialogOpen(true);
+    setIsDeleteDialogOpen(true);
   };
 
   const confirmDelete = () => {
     if (studentToDelete) {
-      setStudents(students.filter((s) => s.id !== studentToDelete.id));
+      setStudents(students.filter(s => s.id !== studentToDelete.id));
       toast({
         title: "Student Deleted",
-        description: `${studentToDelete.name} has been removed from the system.`,
+        description: `${studentToDelete.name} has been removed.`,
       });
+      setIsDeleteDialogOpen(false);
       setStudentToDelete(null);
-      setDeleteDialogOpen(false);
-    }
-  };
-
-  const handleFormSubmit = (data) => {
-    if (selectedStudent) {
-      // Update existing student
-      setStudents(
-        students.map((s) => (s.id === selectedStudent.id ? { ...s, ...data } : s))
-      );
-      toast({
-        title: "Student Updated",
-        description: `${data.name}'s information has been updated.`,
-      });
-    } else {
-      // Add new student
-      const newStudent = {
-        id: `student-${students.length + 1}`,
-        ...data,
-        courseIds: [],
-        status: "active"
-      };
-      setStudents([...students, newStudent]);
-      toast({
-        title: "Student Added",
-        description: `${data.name} has been added to the system.`,
-      });
     }
   };
 
@@ -128,7 +130,7 @@ export default function StudentsPage() {
       case "active":
         return <Badge className="bg-green-500">Active</Badge>;
       case "inactive":
-        return <Badge variant="secondary">Inactive</Badge>;
+        return <Badge variant="outline">Inactive</Badge>;
       case "suspended":
         return <Badge className="bg-red-500">Suspended</Badge>;
       default:
@@ -136,21 +138,50 @@ export default function StudentsPage() {
     }
   };
 
+  const addNewStudent = () => {
+    const newStudent = {
+      id: `STU00${students.length + 1}`,
+      name: "New Student",
+      email: "new.student@example.com",
+      avatarUrl: "",
+      courseIds: [],
+      status: "active",
+    };
+    
+    setStudents([...students, newStudent]);
+    toast({
+      title: "Student Added",
+      description: "New student has been added successfully.",
+    });
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto py-6">
       <PageHeader
         title="Students"
-        description="Manage student accounts and enrollment"
+        description="Manage student accounts and enrollments."
         actions={
-          <Button onClick={() => {
-            setSelectedStudent(null);
-            setFormOpen(true);
-          }}>
-            <PlusIcon className="mr-2 h-4 w-4" />
+          <Button onClick={addNewStudent}>
+            <Plus className="mr-2 h-4 w-4" />
             Add Student
           </Button>
         }
       />
+
+      <div className="my-6">
+        <div className="flex items-center justify-between">
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search students..."
+              className="w-full pl-8"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="rounded-md border">
         <Table>
@@ -160,52 +191,47 @@ export default function StudentsPage() {
               <TableHead>Email</TableHead>
               <TableHead>Courses</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="w-[60px]"></TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {students.map((student) => (
-              <TableRow key={student.id} className="cursor-pointer" onClick={() => handleViewDetail(student)}>
+            {filteredStudents.map((student) => (
+              <TableRow key={student.id}>
                 <TableCell>
-                  <div className="flex items-center gap-3">
-                    <Avatar>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8">
                       <AvatarImage src={student.avatarUrl} alt={student.name} />
                       <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <div>{student.name}</div>
+                    <span>{student.name}</span>
                   </div>
                 </TableCell>
                 <TableCell>{student.email}</TableCell>
-                <TableCell>{student.courseIds.length} courses</TableCell>
+                <TableCell>{student.courseIds.length}</TableCell>
                 <TableCell>{getStatusBadge(student.status)}</TableCell>
-                <TableCell>
+                <TableCell className="text-right">
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon">
-                        <DotsHorizontalIcon className="h-4 w-4" />
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        handleViewDetail(student);
-                      }}>
-                        View details
+                      <DropdownMenuItem onClick={() => handleView(student)}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        handleEdit(student);
-                      }}>
+                      <DropdownMenuItem onClick={() => handleEdit(student)}>
+                        <Edit className="mr-2 h-4 w-4" />
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem 
-                        className="text-red-600"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(student);
-                        }}
+                        onClick={() => handleDeleteClick(student)}
+                        className="text-destructive"
                       >
+                        <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -217,42 +243,30 @@ export default function StudentsPage() {
         </Table>
       </div>
 
-      {/* Student Form Dialog */}
-      <StudentForm
-        student={selectedStudent}
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        onSubmit={handleFormSubmit}
+      <StudentDetail 
+        student={selectedStudent} 
+        open={isDetailOpen} 
+        onOpenChange={setIsDetailOpen} 
       />
 
-      {/* Student Detail Dialog */}
-      <StudentDetail
-        student={selectedStudent}
-        open={detailOpen}
-        onOpenChange={setDetailOpen}
-        onEdit={handleEdit}
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete {studentToDelete?.name}'s account and remove them from all enrolled courses.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete {studentToDelete?.name}? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

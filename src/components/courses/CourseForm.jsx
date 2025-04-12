@@ -13,19 +13,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "@/components/common/ImageUploader";
 
-export function CourseForm({ 
-  course, 
-  teacherId, 
-  teacherName, 
-  open, 
-  onOpenChange, 
-  onSubmit 
-}) {
+export function CourseForm({ course, open, onOpenChange, onSubmit }) {
   const [title, setTitle] = useState(course?.title || "");
   const [description, setDescription] = useState(course?.description || "");
   const [category, setCategory] = useState(course?.category || "");
-  const [imageUrl, setImageUrl] = useState(course?.imageUrl || "");
   const [tags, setTags] = useState(course?.tags?.join(", ") || "");
+  const [imageUrl, setImageUrl] = useState(course?.imageUrl || "");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,10 +26,8 @@ export function CourseForm({
       title,
       description,
       category,
+      tags: tags.split(",").map(tag => tag.trim()).filter(Boolean),
       imageUrl,
-      tags: tags.split(",").map(tag => tag.trim()).filter(tag => tag),
-      teacherId: course?.teacherId || teacherId || "",
-      teacherName: course?.teacherName || teacherName || ""
     });
     onOpenChange(false);
   };
@@ -53,49 +44,65 @@ export function CourseForm({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="flex flex-col items-center gap-2 mb-4">
-              <ImageUploader 
-                initialImage={imageUrl} 
-                onImageChange={handleImageChange}
-                className="h-40 w-full rounded-md object-cover"
-              />
-              <span className="text-sm text-muted-foreground">Upload course image</span>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="image" className="mt-2">
+                Course Image
+              </Label>
+              <div className="col-span-3">
+                <ImageUploader 
+                  initialImage={imageUrl} 
+                  onImageChange={handleImageChange}
+                  className="mx-auto"
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="title">Title</Label>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="title" className="mt-2">
+                Title
+              </Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                className="col-span-3"
                 required
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="category">Category</Label>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="category" className="mt-2">
+                Category
+              </Label>
               <Input
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
+                className="col-span-3"
                 required
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="tags">Tags (comma separated)</Label>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="tags" className="mt-2">
+                Tags
+              </Label>
               <Input
                 id="tags"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
-                placeholder="e.g. programming, beginner, web development"
+                className="col-span-3"
+                placeholder="Comma separated tags"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="description" className="mt-2">
+                Description
+              </Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="col-span-3"
+                rows={5}
+                required
               />
             </div>
           </div>
