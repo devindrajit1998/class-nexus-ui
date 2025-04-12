@@ -8,13 +8,25 @@ import { SidebarItem } from "./sidebar";
 import { useUserRole } from "@/hooks/use-user-role";
 
 type MobileNavProps = {
-  items: SidebarItem[];
+  items?: SidebarItem[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
-export function MobileNav({ items }: MobileNavProps) {
-  const [open, setOpen] = useState(false);
+export function MobileNav({ items = [], open: controlledOpen, onOpenChange }: MobileNavProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const location = useLocation();
   const { userRole } = useUserRole();
+  
+  // Use controlled or uncontrolled state based on props
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = (value: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(value);
+    } else {
+      setInternalOpen(value);
+    }
+  };
 
   const filteredItems = items?.filter(item => 
     item.roles.includes(userRole as 'admin' | 'teacher' | 'student')
