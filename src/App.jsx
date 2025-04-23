@@ -10,6 +10,8 @@ import { useUserRole } from "@/hooks/use-user-role";
 // Auth pages
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 // Dashboard pages
 import Index from "./pages/Index";
@@ -25,6 +27,8 @@ import MessagesPage from "./pages/messages/MessagesPage";
 import CertificatesPage from "./pages/certificates/CertificatesPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import HelpPage from "./pages/help/HelpPage";
+import StudyMaterialPage from "./pages/study-material/StudyMaterialPage";
+import ExamsPage from "./pages/exams/ExamsPage";
 
 // 404 page
 import NotFound from "./pages/NotFound";
@@ -39,6 +43,8 @@ const App = () => {
           {/* Auth routes (outside layout) */}
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/auth/register" element={<RegisterPage />} />
+          <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
           {/* Protected routes (inside layout) */}
           <Route path="/" element={<Layout />}>
@@ -53,7 +59,10 @@ const App = () => {
             <Route path="messages" element={<MessagesPage />} />
             <Route path="certificates" element={<CertificatesPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="settings/profile" element={<SettingsPage />} />
             <Route path="help" element={<HelpPage />} />
+            <Route path="study-material" element={<StudyMaterialPage />} />
+            <Route path="exams" element={<ExamsPage />} />
           </Route>
 
           {/* 404 route */}

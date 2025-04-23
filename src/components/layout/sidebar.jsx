@@ -16,9 +16,11 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  BookMarked,
+  FileQuestion,
 } from "lucide-react";
 
-const sidebarItems = [
+export const sidebarItems = [
   {
     title: "Dashboard",
     href: "/",
@@ -59,6 +61,18 @@ const sidebarItems = [
     title: "Resources",
     href: "/resources",
     icon: Upload,
+    roles: ["admin", "teacher", "student"],
+  },
+  {
+    title: "Study Material",
+    href: "/study-material",
+    icon: BookMarked,
+    roles: ["admin", "teacher", "student"],
+  },
+  {
+    title: "Exams",
+    href: "/exams",
+    icon: FileQuestion,
     roles: ["admin", "teacher", "student"],
   },
   {

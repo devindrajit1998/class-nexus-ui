@@ -3,7 +3,7 @@ import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Menu, Search, Bell, Settings, LogOut, User } from "lucide-react";
+import { Menu, Search, Bell, Settings, LogOut, User, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { MobileNav } from "./mobile-nav";
 import { NotificationList } from "@/components/notifications/NotificationList";
@@ -17,11 +17,19 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export function TopBar() {
   const { theme } = useTheme();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const { user } = useUserRole();
+  const { user, setUserRole } = useUserRole();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Simulate logout by redirecting to login page
+    setUserRole("admin"); // Reset to admin by default
+    navigate("/auth/login");
+  };
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center border-b bg-white dark:bg-slate-950 dark:border-slate-800 px-4 md:px-6">
@@ -39,6 +47,9 @@ export function TopBar() {
         <h1 className="text-lg font-semibold md:text-xl">EduManage</h1>
       </div>
       <div className="flex items-center gap-2">
+        <Button variant="outline" size="icon" className="rounded-full" as={Link} to="/messages">
+          <MessageSquare className="h-4 w-4" />
+        </Button>
         <Button variant="outline" size="icon" className="rounded-full">
           <Search className="h-4 w-4" />
         </Button>
@@ -55,7 +66,7 @@ export function TopBar() {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to="/settings" className="flex items-center gap-2 cursor-pointer">
+              <Link to="/settings/profile" className="flex items-center gap-2 cursor-pointer">
                 <User className="h-4 w-4" />
                 <span>Profile</span>
               </Link>
@@ -67,11 +78,9 @@ export function TopBar() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to="/auth/login" className="flex items-center gap-2 cursor-pointer text-red-500">
-                <LogOut className="h-4 w-4" />
-                <span>Log out</span>
-              </Link>
+            <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer text-red-500">
+              <LogOut className="h-4 w-4" />
+              <span>Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
